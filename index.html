@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Pintura JavaScript example project</title>
+        <link
+            rel="stylesheet"
+            href="./node_modules/@pqina/pintura/pintura.css"
+        />
+        <style>
+            html {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI',
+                    Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji',
+                    'Segoe UI Emoji', 'Segoe UI Symbol';
+                font-size: 16px;
+                line-height: 1.5;
+            }
+
+            body {
+                padding: 1em;
+            }
+
+            img {
+                max-width: 100%;
+            }
+
+            pintura-editor {
+                height: 50vh;
+            }
+
+            /* bright / dark mode */
+            pintura-editor {
+                --color-background: 255, 255, 255;
+                --color-foreground: 10, 10, 10;
+            }
+
+            @media (prefers-color-scheme: dark) {
+                html {
+                    color: #fff;
+                    background: #111;
+                }
+
+                pintura-editor {
+                    --color-background: 10, 10, 10;
+                    --color-foreground: 255, 255, 255;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Pintura Custom Element</h1>
+
+        <pintura-editor src="./image.jpeg"></pintura-editor>
+
+        <script type="module">
+            import { defineDefaultCustomElements } from './node_modules/@pqina/pintura/pintura.js';
+
+            // register Pintura custom element
+            defineDefaultCustomElements();
+
+            // get reference to editor element
+            const editor = document.querySelector('pintura-editor');
+
+            // set properties
+            editor.imageCropAspectRatio = 1;
+
+            // listen for load event to get loaded image information
+            editor.addEventListener('pintura:load', (e) => {
+                console.log(e.detail);
+            });
+
+            // listen for process event to catch created image
+            editor.addEventListener('pintura:process', (e) => {
+                console.log(e.detail);
+
+                // append the resulting image to the DOM
+                const output = new Image();
+                output.src = URL.createObjectURL(e.detail.dest);
+                document.body.append(output);
+            });
+        </script>
+    </body>
+</html>
